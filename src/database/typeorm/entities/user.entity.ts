@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Role } from './role.entity';
 import * as argon2 from 'argon2';
+import { USER_ROLE } from '@shared/enum/user.enum';
 
 @Index('users_email_key', ['email'], { unique: true })
 @Index('users_pkey', ['id'], { unique: true })
@@ -44,6 +45,14 @@ export class User {
   @ManyToOne(() => Role, (role) => role.users)
   @JoinColumn([{ name: 'role_id', referencedColumnName: 'id' }])
   role: Role;
+
+  @BeforeInsert()
+  setDefaultRole() {
+    if (!this.role) {
+      this.role = new Role();
+      this.role.id = USER_ROLE.MEMBER;
+    }
+  }
 
   @BeforeInsert()
   async hashPassword() {
