@@ -6,9 +6,11 @@ import {
   HttpCode,
   UseGuards,
   Res,
+  Get,
+  Request
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RegisterResponse } from './response/register.response';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { LoginResponse } from './response/login.response';
@@ -16,6 +18,9 @@ import { LocalAuthGuard } from './guard/local-auth.guard';
 import { User } from '@database/typeorm/entities';
 import { CurrentUser } from '@shared/decorator/user.decorator';
 import { Response } from 'express';
+import { AuthGuard } from './guard/auth.guard';
+import { UserResponeDto } from '@modules/user/dto/user-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('auth')
 export class AuthController {
@@ -58,7 +63,25 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<LoginResponse> {
     const data = await this.authService.login(user);
-    res.cookie('token', data.token);
+    res.cookie('token', data.access_token);
     return data;
+  }
+
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    tags: ['auth'],
+    operationId: 'profile',
+    summary: 'Profile',
+    description: 'Profile',
+  })
+
+  @Get('profile')
+  @ApiBearerAuth('token')
+  async getProfileUser(@Request() req): Promise<UserResponeDto> {
+    return plainToInstance(
+      UserResponeDto,
+      await this.authService.getUserById(req.user['userId'])
+    );
   }
 }
