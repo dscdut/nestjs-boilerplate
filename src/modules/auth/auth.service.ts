@@ -12,7 +12,6 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
@@ -30,10 +29,26 @@ export class AuthService {
   async login(user: User) {
     const payload = { email: user.email, userId: user.id };
     return {
-      email: user.email,
-      token: this.jwtService.sign(payload),
-      role: user.role,
+      access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async getUserById(userId: number): Promise<User> {
+    const user = await this.userRepository.createQueryBuilder('users')
+              .innerJoinAndSelect('users.role', 'role')
+              .where('users.id = :id', { id: userId })
+              .select([
+                'users.id as id',
+                'users.name as name',
+                'users.email as email',
+                'role.name as role'
+              ])
+              .getRawOne();
+
+    if (!user)
+      throw new UnauthorizedException('User not existed');
+
+    return user;
   }
 
   async validateAndGetUser(

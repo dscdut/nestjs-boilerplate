@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ApiConfigService } from '@shared/services/api-config.service';
 import { SharedModule } from '@shared/services/shared.module';
 import { MediaModule } from './modules/media/media.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { MediaModule } from './modules/media/media.module';
     }),
   ],
   controllers: [AppController, AuthController],
-  providers: [AppService],
+  providers: [AppService, JwtService],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}
