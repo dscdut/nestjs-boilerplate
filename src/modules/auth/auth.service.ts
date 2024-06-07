@@ -7,6 +7,7 @@ import { User } from '@database/typeorm/entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
+import { CreateAuthDto } from './dto/auth-create.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -17,12 +18,13 @@ export class AuthService {
   ) {}
 
   async registerUser(
-    authCredentialDto: AuthCredentialDto,
+    createAuthDto: CreateAuthDto,
   ): Promise<RegisterResponse> {
-    const user = await this.userService.createOne(authCredentialDto);
+    const user = await this.userService.createOne(createAuthDto);
     return {
       id: user.id,
       email: user.email,
+      full_name: user.name
     };
   }
 

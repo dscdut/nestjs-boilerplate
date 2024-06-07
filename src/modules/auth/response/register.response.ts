@@ -12,4 +12,10 @@ export class RegisterResponse {
     example: 'example@gmail.com',
   })
   email: string;
+
+  @ApiProperty({
+    type: String,
+    example: 'Example',
+  })
+  full_name: string;
 }

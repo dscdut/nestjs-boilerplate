@@ -21,6 +21,7 @@ import { Response } from 'express';
 import { AuthGuard } from './guard/auth.guard';
 import { UserResponeDto } from '@modules/user/dto/user-response.dto';
 import { plainToInstance } from 'class-transformer';
+import { CreateAuthDto } from './dto/auth-create.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -39,7 +40,7 @@ export class AuthController {
     description: 'Successful',
     type: RegisterResponse,
   })
-  async register(@Body() data: AuthCredentialDto): Promise<RegisterResponse> {
+  async register(@Body() data: CreateAuthDto): Promise<RegisterResponse> {
     return this.authService.registerUser(data);
   }
 
