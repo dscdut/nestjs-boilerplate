@@ -34,9 +34,9 @@ export class PageOptionsDto {
   @Min(1)
   @Max(MAX_LIMIT)
   @IsOptional()
-  readonly limit?: number = DEFAULT_LIMIT;
+  readonly page_size?: number = DEFAULT_LIMIT;
 
   get skip(): number {
-    return (this.page - 1) * this.limit;
+    return (this.page - 1) * this.page_size;
   }
 }
