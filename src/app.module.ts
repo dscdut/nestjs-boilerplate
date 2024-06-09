@@ -13,10 +13,12 @@ import { ApiConfigService } from '@shared/services/api-config.service';
 import { SharedModule } from '@shared/services/shared.module';
 import { MediaModule } from './modules/media/media.module';
 import { JwtService } from '@nestjs/jwt';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
     AuthModule,
+    AdminModule,
     MediaModule,
     UserModule,
     ConfigModule.forRoot({

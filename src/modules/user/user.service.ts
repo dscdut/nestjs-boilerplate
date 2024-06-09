@@ -1,7 +1,7 @@
 import { PageDto } from '@core/pagination/dto/page.dto';
 import { User } from '@database/typeorm/entities';
 import { AuthCredentialDto } from '@modules/auth/dto/auth-credential.dto';
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PageMetaDto } from '@core/pagination/dto/page-meta.dto';
@@ -57,10 +57,43 @@ export class UserService {
   }
 
   async findOneById(id: number): Promise<User> {
-    return this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.createQueryBuilder('users')
+              .innerJoinAndSelect('users.role', 'role')
+              .where('users.id = :id', { id: id })
+              .select([
+                'users.id as id',
+                'users.name as name',
+                'users.email as email',
+                'role.name as role'
+              ])
+              .getRawOne();
+
+    if (!user)
+      throw new UnauthorizedException('User not existed');
+
+    return user;
+  }
+
+  async findRoleIdByUserId(id: number): Promise<User> {
+    const user = await this.userRepository.createQueryBuilder('users')
+              .innerJoinAndSelect('users.role', 'role')
+              .where('users.id = :id', { id: id })
+              .select([
+                'role.id as role'
+              ])
+              .getRawOne();
+
+    if (!user)
+      throw new UnauthorizedException('User not existed');
+
+    return user;
   }
 
   async findOne(options: Record<string, any>): Promise<User> {
     return this.userRepository.findOneBy(options);
+  }
+
+  async deleteOne(id: number) {
+    return await this.userRepository.delete(id);
   }
 }
