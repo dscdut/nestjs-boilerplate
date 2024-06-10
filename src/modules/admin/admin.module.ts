@@ -6,6 +6,6 @@ import { UserModule } from '@modules/user/user.module';
 @Module({
   imports: [JwtModule, UserModule],
   controllers: [AdminController],
-  providers: []
+  providers: [],
 })
 export class AdminModule {}

@@ -7,7 +7,7 @@ import {
   UseGuards,
   Res,
   Get,
-  Request
+  Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
@@ -76,13 +76,12 @@ export class AuthController {
     summary: 'Profile',
     description: 'Profile',
   })
-
   @Get('profile')
   @ApiBearerAuth('token')
   async getProfileUser(@Request() req): Promise<UserResponeDto> {
     return plainToInstance(
       UserResponeDto,
-      await this.authService.getUserById(req.user['userId'])
+      await this.authService.getUserById(req.user['userId']),
     );
   }
 }

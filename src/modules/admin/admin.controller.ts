@@ -1,5 +1,17 @@
-import { Controller, Param, Delete, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  Controller,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { Roles } from '@modules/auth/guard/roles.decorator';
 import { USER_ROLE } from '@shared/enum/user.enum';
 import { RolesGuard } from '@modules/auth/guard/roles.guard';
@@ -8,11 +20,9 @@ import { UserService } from '@modules/user/user.service';
 
 @Controller('admin')
 export class AdminController {
-  constructor(
-    private readonly userService: UserService
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
-  @Delete("users/:id")
+  @Delete('users/:id')
   @Roles(USER_ROLE.ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -33,7 +43,7 @@ export class AdminController {
     type: 'integer',
   })
   @ApiBearerAuth('token')
-  async deleteUsers(@Param("id") id: number) {
+  async deleteUsers(@Param('id') id: number) {
     await this.userService.findOneById(id);
     await this.userService.deleteOne(id);
   }
