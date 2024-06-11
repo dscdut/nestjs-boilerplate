@@ -21,7 +21,7 @@ export class UserService {
       .select(['users.name', 'users.id', 'users.email'])
       .orderBy('users.createdAt', pageOptionsDto.order)
       .skip(pageOptionsDto.skip)
-      .take(pageOptionsDto.limit);
+      .take(pageOptionsDto.page_size);
 
     const itemCount = await queryBuilder.getCount();
     const data = await queryBuilder.getMany();
