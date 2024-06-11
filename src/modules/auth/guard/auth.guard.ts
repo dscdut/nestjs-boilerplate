@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private readonly configService: ApiConfigService,
-    private readonly reflector: Reflector
+    private readonly reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -34,12 +34,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: this.configService.authConfig.secret
-        }
-      );
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.authConfig.secret,
+      });
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException();

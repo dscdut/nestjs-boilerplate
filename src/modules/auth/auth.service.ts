@@ -17,14 +17,17 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async registerUser(
-    createAuthDto: CreateAuthDto,
-  ): Promise<RegisterResponse> {
-    const user = await this.userService.createOne(createAuthDto);
+  async registerUser(createAuthDto: CreateAuthDto): Promise<RegisterResponse> {
+    const data = {
+      name: createAuthDto.full_name,
+      email: createAuthDto.email,
+      password: createAuthDto.password,
+    };
+    const user = await this.userService.createOne(data);
     return {
       id: user.id,
       email: user.email,
-      full_name: user.name
+      full_name: user.name,
     };
   }
 
@@ -36,19 +39,19 @@ export class AuthService {
   }
 
   async getUserById(userId: number): Promise<User> {
-    const user = await this.userRepository.createQueryBuilder('users')
-              .innerJoinAndSelect('users.role', 'role')
-              .where('users.id = :id', { id: userId })
-              .select([
-                'users.id as id',
-                'users.name as name',
-                'users.email as email',
-                'role.name as role'
-              ])
-              .getRawOne();
+    const user = await this.userRepository
+      .createQueryBuilder('users')
+      .innerJoinAndSelect('users.role', 'role')
+      .where('users.id = :id', { id: userId })
+      .select([
+        'users.id as id',
+        'users.name as name',
+        'users.email as email',
+        'role.name as role',
+      ])
+      .getRawOne();
 
-    if (!user)
-      throw new UnauthorizedException('User not existed');
+    if (!user) throw new UnauthorizedException('User not existed');
 
     return user;
   }

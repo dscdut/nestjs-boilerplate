@@ -4,7 +4,7 @@ import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 export class AuthCredentialDto {
   @ApiProperty({
     type: String,
-    example: 'Example@example.com'
+    example: 'Example@example.com',
   })
   @IsEmail()
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class AuthCredentialDto {
 
   @ApiProperty({
     type: String,
-    example: 'Test12345'
+    example: 'Test12345',
   })
   @IsString()
   @IsNotEmpty()

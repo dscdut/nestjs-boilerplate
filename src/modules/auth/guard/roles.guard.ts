@@ -8,14 +8,14 @@ import { UserService } from '@modules/user/user.service';
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.getAllAndOverride<USER_ROLE[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const requiredRoles = this.reflector.getAllAndOverride<USER_ROLE[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
     const { user } = context.switchToHttp().getRequest();
     const currentUser = await this.userService.findRoleIdByUserId(user.userId);
     user['role'] = currentUser.role;

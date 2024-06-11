@@ -1,11 +1,16 @@
 import { PageDto } from '@core/pagination/dto/page.dto';
 import { User } from '@database/typeorm/entities';
 import { AuthCredentialDto } from '@modules/auth/dto/auth-credential.dto';
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PageMetaDto } from '@core/pagination/dto/page-meta.dto';
 import { PageOptionsDto } from '@core/pagination/dto/page-option.dto';
+import { UpdateProfileInfo } from './dto/update-profile.dto';
 
 @Injectable()
 export class UserService {
@@ -47,44 +52,56 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  async updateOne(id: number, data: Partial<User>): Promise<User> {
-    return this.userRepository.save(
-      this.userRepository.create({
-        id,
-        ...data,
-      }),
-    );
+  async updateProfileInfo(id: number, data: UpdateProfileInfo) {
+    const info = {
+      id,
+      ...data,
+    };
+    const user = await this.userRepository.save(info);
+    const roleUser = await this.userRepository
+      .createQueryBuilder('users')
+      .innerJoinAndSelect('users.role', 'role')
+      .where('users.id = :id', { id: id })
+      .select(['role.id as id', 'role.name as name'])
+      .getRawOne();
+    return {
+      id: user.id,
+      full_name: user.full_name,
+      email: user.email,
+      role: {
+        id: roleUser.id,
+        name: roleUser.name,
+      },
+    };
   }
 
   async findOneById(id: number): Promise<User> {
-    const user = await this.userRepository.createQueryBuilder('users')
-              .innerJoinAndSelect('users.role', 'role')
-              .where('users.id = :id', { id: id })
-              .select([
-                'users.id as id',
-                'users.name as name',
-                'users.email as email',
-                'role.name as role'
-              ])
-              .getRawOne();
+    const user = await this.userRepository
+      .createQueryBuilder('users')
+      .innerJoinAndSelect('users.role', 'role')
+      .where('users.id = :id', { id: id })
+      .select([
+        'users.id as id',
+        'users.name as name',
+        'users.email as email',
+        'role.name as role',
+      ])
+      .getRawOne();
 
-    if (!user)
-      throw new UnauthorizedException('User not existed');
+    if (!user) throw new UnauthorizedException('User not existed');
 
     return user;
   }
 
   async findRoleIdByUserId(id: number): Promise<User> {
-    const user = await this.userRepository.createQueryBuilder('users')
-              .innerJoinAndSelect('users.role', 'role')
-              .where('users.id = :id', { id: id })
-              .select([
-                'role.id as role'
-              ])
-              .getRawOne();
+    const user = await this.userRepository
+      .createQueryBuilder('users')
+      .innerJoinAndSelect('users.role', 'role')
+      .where('users.id = :id', { id: id })
+      .select(['role.id as role'])
+      .getRawOne();
 
-    if (!user)
-      throw new UnauthorizedException('User not existed');
+    if (!user) throw new UnauthorizedException('User not existed');
 
     return user;
   }
