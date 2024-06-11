@@ -6,10 +6,14 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import { USER_ROLE } from '@shared/enum/user.enum';
 
 @Index('roles_pkey', ['id'], { unique: true })
 @Entity('roles', { schema: 'public' })
 export class Role {
+  includes(role: USER_ROLE): unknown {
+    throw new Error('Method not implemented.');
+  }
   @PrimaryGeneratedColumn({ type: 'integer', name: 'id' })
   id: number;
 
