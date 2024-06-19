@@ -6,11 +6,11 @@ export class CreateAuthDto {
     type: String,
     example: 'Example',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'RE-104' })
   @IsString()
   full_name: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'RE-104' })
   @ApiProperty({
     type: String,
     example: 'Example@example.com',
@@ -18,7 +18,7 @@ export class CreateAuthDto {
   @IsEmail()
   email: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'RE-104' })
   @ApiProperty({
     type: String,
     example: 'Test12345',
@@ -27,7 +27,7 @@ export class CreateAuthDto {
   @MinLength(6)
   password: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'RE-104' })
   @ApiProperty({
     type: String,
     example: 'Test12345',

@@ -47,7 +47,6 @@ export class AdminController {
   })
   @ApiBearerAuth('token')
   async deleteUsers(@Param('id') id: number) {
-    await this.userService.findOneById(id);
     await this.userService.deleteOne(id);
   }
 

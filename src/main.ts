@@ -40,7 +40,7 @@ async function bootstrap(): Promise<NestExpressApplication> {
   });
 
   const config = app.get<ConfigService>(ConfigService);
-  app.useGlobalFilters(new GlobalExceptionsFilter(config));
+  // app.useGlobalFilters(new GlobalExceptionsFilter(config));
 
   await app.listen(config.get('PORT'), async () => {
     logger.info(`Application is running on: ${await app.getUrl()}`);

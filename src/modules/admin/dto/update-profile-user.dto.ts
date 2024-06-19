@@ -6,11 +6,11 @@ export class UpdateProfileUser {
     type: String,
     example: 'Example',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'RE-104' })
   @IsString()
   full_name: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'RE-104' })
   @ApiProperty({
     type: String,
     example: 'Example@example.com',
@@ -18,7 +18,7 @@ export class UpdateProfileUser {
   @IsEmail()
   email: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'RE-104' })
   @ApiProperty({
     type: Number,
     example: '1',
