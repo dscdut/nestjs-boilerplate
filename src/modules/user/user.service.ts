@@ -50,7 +50,7 @@ export class UserService {
       email: data.email,
     });
     if (isUserExisted) {
-      throw new ConflictException('User is existed');
+      throw new ConflictException("LO-108");
     }
     const user = this.userRepository.create(data);
     return this.userRepository.save(user);
@@ -92,7 +92,7 @@ export class UserService {
       ])
       .getRawOne();
 
-    if (!user) throw new UnauthorizedException('User not existed');
+    if (!user) throw new UnauthorizedException('PROF-104');
 
     return user;
   }
@@ -105,7 +105,7 @@ export class UserService {
       .select(['role.id as role'])
       .getRawOne();
 
-    if (!user) throw new UnauthorizedException('User not existed');
+    if (!user) throw new UnauthorizedException('PROF-104');
 
     return user;
   }
@@ -115,6 +115,7 @@ export class UserService {
   }
 
   async deleteOne(id: number) {
+    await this.findOneById(id);
     return await this.userRepository.delete(id);
   }
 
@@ -128,7 +129,7 @@ export class UserService {
       .getRawOne();
 
     if (roleID.role === USER_ROLE.ADMIN) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException("PROF-104");
     }
 
     return false;

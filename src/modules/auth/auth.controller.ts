@@ -14,9 +14,6 @@ import { ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RegisterResponse } from './response/register.response';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { LoginResponse } from './response/login.response';
-import { LocalAuthGuard } from './guard/local-auth.guard';
-import { User } from '@database/typeorm/entities';
-import { CurrentUser } from '@shared/decorator/user.decorator';
 import { Response } from 'express';
 import { AuthGuard } from './guard/auth.guard';
 import { UserResponeDto } from '@modules/user/dto/user-response.dto';
@@ -45,7 +42,6 @@ export class AuthController {
   }
 
   @Post('/login')
-  @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     tags: ['auth'],
@@ -59,11 +55,10 @@ export class AuthController {
     type: LoginResponse,
   })
   async login(
-    @Body() _: AuthCredentialDto,
-    @CurrentUser() user: User,
+    @Body() body: AuthCredentialDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<LoginResponse> {
-    const data = await this.authService.login(user);
+    const data = await this.authService.login(body);
     res.cookie('token', data.access_token);
     return data;
   }

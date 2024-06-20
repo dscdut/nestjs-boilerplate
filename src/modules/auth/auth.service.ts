@@ -31,7 +31,8 @@ export class AuthService {
     };
   }
 
-  async login(user: User) {
+  async login(body: AuthCredentialDto) {
+    const user = await this.validateAndGetUser(body);
     const payload = { email: user.email, userId: user.id };
     return {
       access_token: this.jwtService.sign(payload),
@@ -51,7 +52,7 @@ export class AuthService {
       ])
       .getRawOne();
 
-    if (!user) throw new UnauthorizedException('User not existed');
+    if (!user) throw new UnauthorizedException("PROF-104");
 
     return user;
   }
@@ -64,7 +65,7 @@ export class AuthService {
       email,
     });
     if (!isUserExisted) {
-      throw new UnauthorizedException('email or password is incorrect');
+      throw new UnauthorizedException('LO-102');
     }
 
     const isValidPassword = await argon2.verify(
@@ -73,7 +74,7 @@ export class AuthService {
     );
 
     if (!isValidPassword) {
-      throw new UnauthorizedException('email or password is incorrect');
+      throw new UnauthorizedException('LO-102');
     }
 
     return isUserExisted;
