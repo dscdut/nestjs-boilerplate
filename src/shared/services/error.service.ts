@@ -1,16 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import { I18nContext } from 'nestjs-i18n';
+import { ConfigService } from '@nestjs/config';
+import { NodeEnv } from '@core/enum';
 
 @Injectable()
 export class ErrorService {
-  message(err: string | object, i18n: I18nContext) {
+  constructor(
+    private readonly configService: ConfigService,
+  ) {}
+  message(err: string | object, i18n: I18nContext, stackTrace: any) {
     switch (err['error']) {
       case 'Bad Request':
-        return this.combine(err['message'][0], i18n);
+        return this.combine(err['message'], i18n);
       case 'Forbidden':
         return this.combine(err['message'], i18n);
       case 'Internal Server Error':
+        if (this.configService.get('NODE_ENV') == NodeEnv.DEVELOPMENT) {
+          return this.combineDev(err['message'], i18n, stackTrace);
+        }
         return this.combine(err['message'], i18n);
       case 'Not Found':
         return this.combine(err['message'], i18n);
@@ -45,6 +53,13 @@ export class ErrorService {
   }
 
   private combine(err_msg: string, i18n: I18nContext, errors: object[] = []) {
+    console.log(errors);
     return Object.assign(i18n.t(`errors.${err_msg}`), {});
+  }
+
+  private combineDev(err_msg: string, i18n: I18nContext, stackTrace: any) {
+    return Object.assign(i18n.t(`errors.${err_msg}`), {
+      details: stackTrace
+    });
   }
 }
