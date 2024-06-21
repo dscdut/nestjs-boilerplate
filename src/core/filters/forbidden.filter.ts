@@ -27,6 +27,7 @@ export class ForbiddenExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const errors = exception.getResponse();
     const i18n = I18nContext.current(host);
+    const stackTrace = exception.stack;
 
     if (this.configService.get('NODE_ENV') == NodeEnv.DEVELOPMENT) {
       this.logger.info(exception.message);
@@ -34,6 +35,6 @@ export class ForbiddenExceptionFilter implements ExceptionFilter {
       this.logger.exception(exception.stack);
     }
 
-    res.status(status).json(this.errorService.message(errors, i18n));
+    res.status(status).json(this.errorService.message(errors, i18n, stackTrace));
   }
 }
