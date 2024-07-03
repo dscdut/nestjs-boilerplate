@@ -10,9 +10,9 @@ import {
   Put,
   Query,
   UseGuards,
-  Request
+  Request,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UpdateProfileInfo } from './dto/update-profile.dto';
 import { AuthGuard } from '@modules/auth/guard/auth.guard';
@@ -52,10 +52,8 @@ export class UserController {
     status: HttpStatus.OK,
     description: 'Successful',
   })
-  async updateProfileInfo(
-    @Body() data: UpdateProfileInfo,
-    @Request() req,
-  ) {
+  @ApiBearerAuth('token')
+  async updateProfileInfo(@Body() data: UpdateProfileInfo, @Request() req) {
     return this.userService.updateProfileInfo(req.user['userId'], data);
   }
 }

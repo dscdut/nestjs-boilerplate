@@ -52,7 +52,7 @@ export class AuthService {
       ])
       .getRawOne();
 
-    if (!user) throw new UnauthorizedException("PROF-104");
+    if (!user) throw new UnauthorizedException('PROF-104');
 
     return user;
   }
