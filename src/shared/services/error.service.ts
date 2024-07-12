@@ -6,9 +6,7 @@ import { NodeEnv } from '@core/enum';
 
 @Injectable()
 export class ErrorService {
-  constructor(
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly configService: ConfigService) {}
   message(err: string | object, i18n: I18nContext, stackTrace: any) {
     switch (err['error']) {
       case 'Bad Request':
@@ -59,7 +57,7 @@ export class ErrorService {
 
   private combineDev(err_msg: string, i18n: I18nContext, stackTrace: any) {
     return Object.assign(i18n.t(`errors.${err_msg}`), {
-      details: stackTrace
+      details: stackTrace,
     });
   }
 }

@@ -1,6 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsNotEmpty, IsOptional, Max, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  Max,
+  Min,
+} from 'class-validator';
 import { Order } from '../constant/order.constant';
 import {
   DEFAULT_LIMIT,
@@ -22,7 +29,7 @@ export class PageOptionsDto {
   @IsInt()
   @Min(1)
   @IsOptional()
-  @IsNotEmpty({ message: "PAG-104" })
+  @IsNotEmpty({ message: 'PAG-104' })
   readonly page?: number = DEFAULT_PAGE;
 
   @ApiPropertyOptional({
@@ -35,7 +42,7 @@ export class PageOptionsDto {
   @Min(1)
   @Max(MAX_LIMIT)
   @IsOptional()
-  @IsNotEmpty({ message: "PAG-104" })
+  @IsNotEmpty({ message: 'PAG-104' })
   readonly page_size?: number = DEFAULT_LIMIT;
 
   get skip(): number {

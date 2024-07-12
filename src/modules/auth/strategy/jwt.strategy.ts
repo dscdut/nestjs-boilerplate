@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const { userId } = payload;
     const user = await this.userService.findOneById(userId);
     if (!user) {
-      throw new UnauthorizedException("PROF-104");
+      throw new UnauthorizedException('PROF-104');
     }
 
     return user;

@@ -50,7 +50,7 @@ export class UserService {
       email: data.email,
     });
     if (isUserExisted) {
-      throw new ConflictException("LO-108");
+      throw new ConflictException('LO-108');
     }
     const user = this.userRepository.create(data);
     return this.userRepository.save(user);
@@ -129,7 +129,7 @@ export class UserService {
       .getRawOne();
 
     if (roleID.role === USER_ROLE.ADMIN) {
-      throw new UnauthorizedException("PROF-104");
+      throw new UnauthorizedException('PROF-104');
     }
 
     return false;

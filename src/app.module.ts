@@ -23,6 +23,7 @@ import { ConflictExceptionFilter } from '@core/filters/conflict-exeption.filter'
 import { InternalServerErrorExceptionFilter } from '@core/filters/internal-server-error.filter';
 import { NotFoundExceptionFilter } from '@core/filters/not-found.filter';
 import { UnprocessableEntityExceptionFilter } from '@core/filters/unprocess-entity.filter';
+import { OrderModule } from '@modules/order/order.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { UnprocessableEntityExceptionFilter } from '@core/filters/unprocess-enti
     AdminModule,
     MediaModule,
     UserModule,
+    OrderModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

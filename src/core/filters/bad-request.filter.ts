@@ -34,6 +34,8 @@ export class BadRequestExceptionFilter implements ExceptionFilter {
       this.logger.exception(exception.stack);
     }
 
-    res.status(status).json(this.errorService.message(errors, i18n, stackTrace));
+    res
+      .status(status)
+      .json(this.errorService.message(errors, i18n, stackTrace));
   }
 }
