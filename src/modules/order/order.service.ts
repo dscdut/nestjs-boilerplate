@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaymentMethod } from '@database/typeorm/entities/payment-method.entity';
@@ -25,8 +25,6 @@ export class OrderService {
   }
 
   async create(createOrderDto: CreateOrderDto, userId: number) {
-    await this.calculatePrice(createOrderDto);
-
     const paymentMethodName = await this.getPaymentMethodName(
       createOrderDto.payment_method_id,
     );
@@ -35,53 +33,19 @@ export class OrderService {
 
     const queryRunner = this.datasource.createQueryRunner();
     await queryRunner.connect();
-    await queryRunner.startTransaction('READ COMMITTED');
 
-    try {
-      await queryRunner.manager.transaction(
-        async (transactionalEntityManager) => {
-          createOrderDto.items.map(async (item) => {
-            const products = await transactionalEntityManager.find(Product, {
-              where: {
-                id: item.id,
-              },
-              lock: {
-                mode: 'pessimistic_write',
-              },
-            });
+    const createdOrder = queryRunner.manager.create(Order, {
+      customer_name: createOrderDto.customer_name,
+      customer_phone: createOrderDto.customer_phone,
+      tax: this.tax,
+      total: createOrderDto.price,
+      user_id: userId,
+      status: ORDER_STATUS.PENDING,
+      currency: createOrderDto.currency,
+      paymentMethod: { id: createOrderDto.payment_method_id },
+    });
 
-            if (products.length === 0)
-              throw new BadRequestException('CUS-0404');
-
-            const createdOrder = queryRunner.manager.create(Order, {
-              customer_name: createOrderDto.customer_name,
-              customer_phone: createOrderDto.customer_phone,
-              tax: this.tax,
-              total: createOrderDto.total,
-              user_id: userId,
-              status: ORDER_STATUS.PENDING,
-              currency: createOrderDto.currency,
-              paymentMethod: { id: createOrderDto.payment_method_id },
-            });
-
-            order = await queryRunner.manager.save(Order, createdOrder);
-
-            await queryRunner.manager.save(OrderDetails, {
-              order: { id: order.id },
-              product: { id: item.id },
-              price: item.price,
-              amount: item.amount,
-            });
-          });
-        },
-      );
-
-      await queryRunner.commitTransaction();
-      await queryRunner.release();
-    } catch (e) {
-      await queryRunner.rollbackTransaction();
-      throw e;
-    }
+    order = await queryRunner.manager.save(Order, createdOrder);
 
     return this.paymentFactory.createPaymentMethod(
       paymentMethodName,
@@ -97,7 +61,7 @@ export class OrderService {
       .where('payment_methods.id = :id', { id: id })
       .getRawOne();
 
-    if (!paymentMethodName) throw new BadRequestException('PAY-0001');
+    if (!paymentMethodName) throw new NotFoundException('PAY-0001');
 
     return paymentMethodName.name;
   }
@@ -111,7 +75,7 @@ export class OrderService {
         payment_order_id: paymentOrderID,
       })
       .getRawOne();
-    if (!paymentMethodName) throw new BadRequestException('PAY-0001');
+    if (!paymentMethodName) throw new NotFoundException('PAY-0001');
 
     return paymentMethodName.name;
   }
@@ -126,17 +90,5 @@ export class OrderService {
       .getRawOne();
 
     return orderID.id;
-  }
-
-  async calculatePrice(body: CreateOrderDto) {
-    let totalPrice = 0;
-
-    body.items.map((item) => {
-      totalPrice += item.amount * item.price;
-    });
-
-    if (totalPrice + totalPrice * this.tax != body.total) {
-      throw new BadRequestException('Total price is incorrect');
-    }
   }
 }

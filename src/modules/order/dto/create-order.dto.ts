@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsCurrencyValid } from '@shared/decorator/currency.decorator';
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsCurrency,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -30,7 +32,7 @@ export class CreateOrderDto {
     type: String,
     example: 'Example customer name',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'ORDER-FIELD-0001' })
   @IsString()
   customer_name: string;
 
@@ -38,7 +40,7 @@ export class CreateOrderDto {
     type: String,
     example: '0123456789',
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'ORDER-FIELD-0002' })
   @IsString()
   customer_phone: string;
 
@@ -46,7 +48,7 @@ export class CreateOrderDto {
     type: Number,
     example: 2,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'ORDER-FIELD-0005' })
   @IsNumber()
   payment_method_id: number;
 
@@ -54,22 +56,16 @@ export class CreateOrderDto {
     type: Number,
     example: 1000000 * 0.08 + 1000000,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'ORDER-FIELD-0004' })
   @IsNumber()
-  total: number;
+  price: number;
 
   @ApiProperty({
     type: String,
     example: 'VND',
   })
-  @IsNotEmpty()
+  @IsCurrencyValid()
+  @IsNotEmpty({ message: 'ORDER-FIELD-0003' })
   @IsString()
   currency: string;
-
-  @ApiProperty({ type: [Item] })
-  @IsNotEmpty()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Item)
-  items: Item[];
 }

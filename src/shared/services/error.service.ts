@@ -3,29 +3,31 @@ import { ValidationError } from 'class-validator';
 import { I18nContext } from 'nestjs-i18n';
 import { ConfigService } from '@nestjs/config';
 import { NodeEnv } from '@core/enum';
+import * as _ from 'lodash';
 
 @Injectable()
 export class ErrorService {
   constructor(private readonly configService: ConfigService) {}
   message(err: string | object, i18n: I18nContext, stackTrace: any) {
+    const errorMessage = _.isArray(err['message']) ? err['message'][0] : err['message'];
     switch (err['error']) {
       case 'Bad Request':
-        return this.combine(err['message'], i18n);
+        return this.combine(errorMessage, i18n);
       case 'Forbidden':
-        return this.combine(err['message'], i18n);
+        return this.combine(errorMessage, i18n);
       case 'Internal Server Error':
         if (this.configService.get('NODE_ENV') == NodeEnv.DEVELOPMENT) {
-          return this.combineDev(err['message'], i18n, stackTrace);
+          return this.combineDev(errorMessage, i18n, stackTrace);
         }
-        return this.combine(err['message'], i18n);
+        return this.combine(errorMessage, i18n);
       case 'Not Found':
-        return this.combine(err['message'], i18n);
+        return this.combine(errorMessage, i18n);
       case 'Unauthorized':
-        return this.combine(err['message'], i18n);
+        return this.combine(errorMessage, i18n);
       case 'Unprocessable Entity':
         return this.handleUnprocessEntity(err, i18n);
       default:
-        return this.combine(err['message'], i18n);
+        return this.combine(errorMessage, i18n);
     }
   }
 

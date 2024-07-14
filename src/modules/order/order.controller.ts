@@ -7,6 +7,7 @@ import {
   UseGuards,
   Request,
   Param,
+  Put,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -26,7 +27,7 @@ export class OrderController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     tags: ['orders'],
-    operationId: 'orders',
+    operationId: 'create-orders',
     summary: 'Create orders',
     description: 'Create a new orders',
   })
@@ -39,12 +40,12 @@ export class OrderController {
     return await this.orderService.create(createOrderDto, req.user['userId']);
   }
 
-  @Post('payments/:paymentOrderID/capture')
+  @Put('payments/:paymentOrderID/capture')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     tags: ['orders'],
-    operationId: 'orders',
+    operationId: 'capture-orders',
     summary: 'Capture orders',
     description: 'Capture a orders',
   })
