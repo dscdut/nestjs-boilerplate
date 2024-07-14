@@ -7,6 +7,7 @@ import {
   UseGuards,
   Put,
   Body,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -47,6 +48,9 @@ export class AdminController {
   })
   @ApiBearerAuth('token')
   async deleteUsers(@Param('id') id: number) {
+    if (typeof(id) !== 'number' || id <= 0) {
+      throw new BadRequestException('CHECKED-ID')
+    }
     await this.userService.deleteOne(id);
   }
 

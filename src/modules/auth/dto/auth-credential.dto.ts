@@ -7,7 +7,7 @@ export class AuthCredentialDto {
     example: 'Example@example.com',
   })
   @IsEmail()
-  @IsNotEmpty({ message: 'LO-104' })
+  @IsNotEmpty({ message: 'LO-104-EMAIL' })
   email: string;
 
   @ApiProperty({
@@ -15,7 +15,6 @@ export class AuthCredentialDto {
     example: 'Test12345',
   })
   @IsString()
-  @IsNotEmpty({ message: 'LO-104' })
-  @MinLength(6)
+  @IsNotEmpty({ message: 'LO-104-PW' })
   password?: string;
 }

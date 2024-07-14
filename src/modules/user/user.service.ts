@@ -2,8 +2,11 @@ import { PageDto } from '@core/pagination/dto/page.dto';
 import { Role, User } from '@database/typeorm/entities';
 import { AuthCredentialDto } from '@modules/auth/dto/auth-credential.dto';
 import {
+  BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,6 +16,7 @@ import { PageOptionsDto } from '@core/pagination/dto/page-option.dto';
 import { USER_ROLE } from '@shared/enum/user.enum';
 import { UpdateProfileUser } from '@modules/admin/dto/update-profile-user.dto';
 import { UpdateProfileInfo } from './dto/update-profile.dto';
+import * as _ from 'lodash';
 
 @Injectable()
 export class UserService {
@@ -57,6 +61,8 @@ export class UserService {
   }
 
   async updateProfileInfo(id: number, data: UpdateProfileInfo) {
+    await this.checkUserByEmail(data.email, id);
+
     const info = {
       id,
       ...data,
@@ -92,7 +98,11 @@ export class UserService {
       ])
       .getRawOne();
 
-    if (!user) throw new UnauthorizedException('PROF-104');
+    if (!user) throw new NotFoundException('ADMIN-115');
+
+    if (user.role === 'admin') {
+      throw new ForbiddenException('ADMIN-114');
+    }
 
     return user;
   }
@@ -105,7 +115,7 @@ export class UserService {
       .select(['role.id as role'])
       .getRawOne();
 
-    if (!user) throw new UnauthorizedException('PROF-104');
+    if (!user) throw new NotFoundException('ADMIN-115');
 
     return user;
   }
@@ -128,7 +138,7 @@ export class UserService {
       .select(['users.role_id as role'])
       .getRawOne();
 
-    if (roleID.role === USER_ROLE.ADMIN) {
+    if (roleID.role !== USER_ROLE.ADMIN) {
       throw new UnauthorizedException('PROF-104');
     }
 
@@ -136,18 +146,13 @@ export class UserService {
   }
 
   async updateProfileUserByAdmin(id: number, data: UpdateProfileUser) {
-    await this.isAdminRole(id);
-
     const info = {
       id: id,
       name: data.full_name,
       email: data.email,
-      role_id: data.role_id,
     };
 
-    const role = await this.roleRepository.findOne({
-      where: { id: info.role_id },
-    });
+    await this.checkUserByEmail(data.email, id);
 
     await this.userRepository
       .createQueryBuilder()
@@ -155,7 +160,6 @@ export class UserService {
       .set({
         name: info.name,
         email: info.email,
-        role: role,
       })
       .where('id = :id', { id: info.id })
       .execute();
@@ -182,5 +186,19 @@ export class UserService {
         name: roleUser.role_name,
       },
     };
+  }
+
+  async checkUserByEmail(email: string, idUser: number) {
+    const user = await this.userRepository.createQueryBuilder('users')
+              .select(['users.id as id'])
+              .where('email = :email', { email: email })
+              .getRawOne();
+    if (_.isUndefined(user)) {
+      return false;
+    }
+
+    if (user.id !== idUser) {
+      throw new ConflictException('LO-108')
+    }     
   }
 }

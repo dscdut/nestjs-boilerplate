@@ -1,5 +1,5 @@
 import { UserService } from '@modules/user/user.service';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterResponse } from './response/register.response';
@@ -52,7 +52,7 @@ export class AuthService {
       ])
       .getRawOne();
 
-    if (!user) throw new UnauthorizedException('PROF-104');
+    if (!user) throw new NotFoundException('ADMIN-115');
 
     return user;
   }

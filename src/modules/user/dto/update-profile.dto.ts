@@ -6,15 +6,15 @@ export class UpdateProfileInfo {
     type: String,
     example: 'ExampleUpdate',
   })
-  @IsNotEmpty({ message: 'RE-104' })
+  @IsNotEmpty({ message: 'FIELD-0001-NAME' })
   @IsString()
   full_name: string;
 
-  @IsNotEmpty({ message: 'RE-104' })
+  @IsNotEmpty({ message: 'FIELD-0001-EMAIL' })
+  @IsEmail()
   @ApiProperty({
     type: String,
     example: 'Example-update@example.com',
   })
-  @IsEmail()
   email: string;
 }

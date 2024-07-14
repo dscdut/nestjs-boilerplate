@@ -25,7 +25,7 @@ export class MomoService implements IPayment {
         'sha256',
         this.configService.get<string>('momo_gateway.mm_secret_key'),
       )
-      .update(await this.rawSignature(order.total, requestId))
+      .update(await this.rawSignature(order.price, requestId))
       .digest('hex');
 
     const requestBody = JSON.stringify({
@@ -34,7 +34,7 @@ export class MomoService implements IPayment {
       ),
       accessKey: this.configService.get<string>('momo_gateway.mm_access_key'),
       requestId: requestId,
-      amount: order.total,
+      amount: order.price,
       orderId: requestId,
       orderInfo: this.configService.get<string>('momo_gateway.mm_order_info'),
       redirectUrl: this.configService.get<string>(
@@ -72,6 +72,7 @@ export class MomoService implements IPayment {
         payment_order_id: data.orderId,
         status: ORDER_STATUS.PENDING,
         payment_url: data.payUrl,
+        total: order.price
       };
     } catch (error) {
       console.error('Error:', error);
@@ -135,10 +136,7 @@ export class MomoService implements IPayment {
     await this.updateStatusOrder(ORDER_STATUS.PAID, orderID);
 
     return {
-      payment_method_name: 'Momo',
-      status: ORDER_STATUS.PAID,
-      order_id: orderID,
-      payment_order_id: orderPaymentID,
+      status: 'success'
     };
   }
 

@@ -6,23 +6,15 @@ export class UpdateProfileUser {
     type: String,
     example: 'Example',
   })
-  @IsNotEmpty({ message: 'RE-104' })
+  @IsNotEmpty({ message: 'FIELD-0001-NAME' })
   @IsString()
   full_name: string;
 
-  @IsNotEmpty({ message: 'RE-104' })
+  @IsNotEmpty({ message: 'FIELD-0001-EMAIL' })
+  @IsEmail()
   @ApiProperty({
     type: String,
     example: 'Example@example.com',
   })
-  @IsEmail()
   email: string;
-
-  @IsNotEmpty({ message: 'RE-104' })
-  @ApiProperty({
-    type: Number,
-    example: '1',
-  })
-  @IsNumber()
-  role_id: number;
 }

@@ -1,38 +1,36 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { MatchingPassword } from '@shared/decorator/matching-passwork.decorator';
+import { CorrectPassword } from '@shared/decorator/correct-password.decorator';
 
 export class CreateAuthDto {
   @ApiProperty({
     type: String,
     example: 'Example',
   })
-  @IsNotEmpty({ message: 'RE-104' })
-  @IsString()
+  @IsNotEmpty({ message: 'FIELD-0001-NAME' })
   full_name: string;
 
-  @IsNotEmpty({ message: 'RE-104' })
+  @IsNotEmpty({ message: 'FIELD-0001-EMAIL' })
+  @IsEmail()
   @ApiProperty({
     type: String,
     example: 'Example@example.com',
   })
-  @IsEmail()
   email: string;
 
-  @IsNotEmpty({ message: 'RE-104' })
+  @CorrectPassword()
   @ApiProperty({
     type: String,
     example: 'Test12345',
   })
-  @IsString()
-  @MinLength(6)
   password: string;
 
-  @IsNotEmpty({ message: 'RE-104' })
+  @CorrectPassword()
   @ApiProperty({
     type: String,
     example: 'Test12345',
   })
-  @IsString()
-  @MinLength(6)
+  @MatchingPassword('password', { message: 'RE-MATCHING-PW' })
   confirm_password: string;
 }

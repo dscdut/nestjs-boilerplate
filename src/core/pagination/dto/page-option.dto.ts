@@ -27,7 +27,6 @@ export class PageOptionsDto {
   })
   @Type(() => Number)
   @IsInt()
-  @Min(1)
   @IsOptional()
   @IsNotEmpty({ message: 'PAG-104' })
   readonly page?: number = DEFAULT_PAGE;
@@ -39,7 +38,6 @@ export class PageOptionsDto {
   })
   @Type(() => Number)
   @IsInt()
-  @Min(1)
   @Max(MAX_LIMIT)
   @IsOptional()
   @IsNotEmpty({ message: 'PAG-104' })

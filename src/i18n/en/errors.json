@@ -46,5 +46,9 @@
   "ADMIN-113": {
     "error_code": 113,
     "message": "The user is not authorized."
+  },
+  "RE-MATCHING-PW": {
+    "error_code": 104,
+    "message": "Password and confirm password do not match"
   }
 }

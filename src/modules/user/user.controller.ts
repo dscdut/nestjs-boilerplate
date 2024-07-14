@@ -22,6 +22,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get()
   @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
   @ApiOperation({
     tags: ['user'],
     operationId: 'getAllUser',
