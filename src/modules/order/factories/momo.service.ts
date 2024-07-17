@@ -72,7 +72,7 @@ export class MomoService implements IPayment {
         payment_order_id: data.orderId,
         status: ORDER_STATUS.PENDING,
         payment_url: data.payUrl,
-        total: order.price
+        total: order.price,
       };
     } catch (error) {
       console.error('Error:', error);
@@ -136,7 +136,7 @@ export class MomoService implements IPayment {
     await this.updateStatusOrder(ORDER_STATUS.PAID, orderID);
 
     return {
-      status: 'success'
+      status: 'success',
     };
   }
 

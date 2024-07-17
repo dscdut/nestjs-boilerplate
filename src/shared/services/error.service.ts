@@ -9,7 +9,9 @@ import * as _ from 'lodash';
 export class ErrorService {
   constructor(private readonly configService: ConfigService) {}
   message(err: string | object, i18n: I18nContext, stackTrace: any) {
-    const errorMessage = _.isArray(err['message']) ? err['message'][0] : err['message'];
+    const errorMessage = _.isArray(err['message'])
+      ? err['message'][0]
+      : err['message'];
     switch (err['error']) {
       case 'Bad Request':
         return this.combine(errorMessage, i18n);
