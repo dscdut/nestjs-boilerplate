@@ -8,5 +8,15 @@ export const ROOT_DIR =
     : `${process.cwd()}/src`;
 
 export const validCurrencyCodes = [
-  'USD', 'EUR', 'JPY', 'GBP', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD', 'VND'
+  'USD',
+  'EUR',
+  'JPY',
+  'GBP',
+  'AUD',
+  'CAD',
+  'CHF',
+  'CNY',
+  'SEK',
+  'NZD',
+  'VND',
 ];

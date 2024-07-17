@@ -189,16 +189,17 @@ export class UserService {
   }
 
   async checkUserByEmail(email: string, idUser: number) {
-    const user = await this.userRepository.createQueryBuilder('users')
-              .select(['users.id as id'])
-              .where('email = :email', { email: email })
-              .getRawOne();
+    const user = await this.userRepository
+      .createQueryBuilder('users')
+      .select(['users.id as id'])
+      .where('email = :email', { email: email })
+      .getRawOne();
     if (_.isUndefined(user)) {
       return false;
     }
 
     if (user.id !== idUser) {
-      throw new ConflictException('LO-108')
-    }     
+      throw new ConflictException('LO-108');
+    }
   }
 }

@@ -1,5 +1,9 @@
 import { UserService } from '@modules/user/user.service';
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterResponse } from './response/register.response';
